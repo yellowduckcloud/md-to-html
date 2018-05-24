@@ -1,0 +1,88 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: "Hiragino Sans GB", "Microsoft YaHei", "STHeiti", "SimSun", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", 'Segoe UI', AppleSDGothicNeo-Medium, 'Malgun Gothic', Verdana, Tahoma, sans-serif;
+}
+.header-wrapper {
+    width: 100%;
+    position: fixed; /*ojo con mobile... adicionalmente fixed interfiere con margin (impide centrado)*/
+    top:0;
+    z-index: 100;
+    height: 40px;
+    background-color:white;
+    box-shadow: 0 0 1px rgba(0,0,0,0.25);
+}
+.header {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    height: inherit;
+    display: flex;
+    padding: 8px 0 8px 0; 
+}
+#menu-button {
+  width: 24px;
+  height: 24px;
+  background: url(./img/menu.png); 
+  background-size: 24px;
+  flex: 0 0 auto;
+}
+.app-wrapper{
+    display: block;
+    position: relative; /*al solo efecto de poder posicionar absoluto el contenido dentro del contenedor*/
+    max-width: 1400px;
+    margin: 40px auto;
+    z-index: 1;
+}
+.nav-wrapper {
+    position: fixed;
+    top:40px;
+    left: 0;
+    bottom: 40px;
+    background-color:white;
+    z-index: 200;
+    width: 280px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0, 1);
+    -webkit-transform: translate(-280px, 0);
+    transform: translate(-280px, 0); 
+    overflow-x: hidden;
+    overflow-y: auto;
+} 
+.nav-wrapper-open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);       
+}
+@media screen and (min-width: 1024px) {
+    .content {
+        margin-left: 280px;
+    }
+    #menu-button {
+        display: none;
+    }
+    .nav-wrapper {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);        
+    }
+}
+.content {
+    padding: 10px;
+}
+.footer-wrapper {
+  width: 100%;
+  position: fixed; /*ojo con mobile... adicionalmente fixed interfiere con margin (impide centrado)*/
+  bottom:0;
+  z-index: 100;
+  height: 40px;
+  background-color:white;
+  box-shadow: 0 0 1px rgba(0,0,0,0.25);
+}
+.footer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  height: inherit;
+  display: flex;
+  padding: 8px 0 8px 0; 
+}

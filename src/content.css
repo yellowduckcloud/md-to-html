@@ -1,0 +1,142 @@
+.content a {
+    text-decoration: none;
+    vertical-align: baseline;
+  }
+  .content a:hover {
+    text-decoration: underline;
+  }
+  .content h1 {
+    font-size: 2.2em;
+    font-weight: bold;
+    margin: 1.5em 0 1em 0;
+    border-bottom: 1px solid gray;
+  }
+  .content h2 {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 1.275em 0 0.85em 0;
+  }
+  .content h3 {
+    font-size: 1.6em;
+    font-weight: bold;
+    margin: 1.125em 0 0.75em 0;
+  }
+  .content h4 {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin: 0.99em 0 0.66em 0;
+  }
+  .content h5 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0.855em 0 0.57em 0;
+  }
+  .content h6 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0.75em 0 0.5em 0;
+  }
+  .content h1:first-child,
+  .content h2:first-child,
+  .content h3:first-child,
+  .content h4:first-child,
+  .content h5:first-child,
+  .content h6:first-child {
+    margin-top: 0;
+  }
+  .content h1 + p,
+  .content h2 + p,
+  .content h3 + p,
+  .content h4 + p,
+  .content h5 + p,
+  .content h6 + p {
+    margin-top: 0;
+  }
+  .content hr {
+    border: 1px solid #cccccc;
+  }
+  .content p {
+    margin: 1em 0;
+    word-wrap: break-word;
+  }
+  .content ol {
+    list-style-type: decimal;
+  }
+  .content li {
+    display: list-item;
+    line-height: 1.4em;
+  }
+  .content blockquote {
+    margin: 1em 20px;
+  }
+  .content blockquote > :first-child {
+    margin-top: 0;
+  }
+  .contentblockquote > :last-child {
+    margin-bottom: 0;
+  }
+  .content blockquote cite:before {
+    content: '\2014 \00A0';
+  }
+  .content  .code {
+    border-radius: 3px;
+    word-wrap: break-word;
+  }
+  .content pre {
+    border-radius: 3px;
+    word-wrap: break-word;
+    border: 1px solid #cccccc;
+    overflow: auto;
+    padding: .5em;
+  }
+  .content pre code {
+    border: 0;
+    display: block;
+  }
+  .content pre > code {
+    font-family: Consolas, Inconsolata, Courier, monospace;
+    font-weight: bold;
+    white-space: pre;
+    margin: 0;
+  }
+  .content code {
+    border-radius: 3px;
+    word-wrap: break-word;
+    border: 1px solid #cccccc;
+    padding: 0 5px;
+    margin: 0 2px;
+  }
+  .content img {
+    max-width: 100%;
+  }
+  .content mark {
+    color: #000;
+    background-color: #fcf8e3;
+  }
+  .content table {
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 16px;
+  }
+  .content table tr th,
+  .content table tr td {
+    border: 1px solid #cccccc;
+    margin: 0;
+    padding: 6px 13px;
+  }
+  .content table tr th {
+    font-weight: bold;
+  }
+  .content table tr th > :first-child {
+    margin-top: 0;
+  }
+  .content table tr th > :last-child {
+    margin-bottom: 0;
+  }
+  .content table tr td > :first-child {
+    margin-top: 0;
+  }
+  .content table tr td > :last-child {
+    margin-bottom: 0;
+  }
