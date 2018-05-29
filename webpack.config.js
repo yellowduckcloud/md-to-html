@@ -3,60 +3,57 @@ const marked = require("marked");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
 
-const MD_SOURCE_DIR = 'md\\es\\';
-
-const getAllFiles = dir =>
-  fs.readdirSync(dir).reduce((files, file) => {
-    const name = path.join(dir, file);
-    const isDirectory = fs.statSync(name).isDirectory();
-    return isDirectory ? [...files, ...getAllFiles(name)] : [...files, name];
-  }, []);
-
-
-const markdownFilesData = getAllFiles(MD_SOURCE_DIR)
-    .filter(filename => /\.md$/.test(filename))
-    .map(filename => {
-        return {
-            markdown: fs.readFileSync(
-              filename,'utf-8'
-            ),
-            filename: path.dirname(filename).replace(MD_SOURCE_DIR, '').replace('\\', '-') + '-' + path.basename(filename).replace('.md','.html')
-        }
-    });
-
-const makeHtmlConfig = ({markdown, filename }) => (new HtmlWebpackPlugin(
+/*Initialize projects to be bundle*/
+const projects = [
         {
-        template: './src/template.html',
-        filename: `${filename}`,
-        chunks: [ 'main' ],    
-        bodyHTML: marked(markdown),
-        menuBarHTML: menuBar
-        })
-    );   
+        sourceDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\md\\es\\",
+        distDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\dist\\es\\",
+        entry: "./src/main.js",
+        templateHTML: "./src/template.html",
+        mode: "production",
+        },
+        {
+            sourceDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\md\\es\\",
+            distDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\dist\\en\\",
+            entry: "./src/main.js",
+            templateHTML: "./src/template.html",
+            mode: "production",
+            },            
+    ];
 
-const makeMenuBar = (dir, niv) => {
+/*Function used to create sidebar content for each project*/
+const makeMenuBar = (dir, niv, sourceDir) => {
     niv++
     return fs.readdirSync(dir).reduce((res, file) => {
         const name = path.join(dir, file);
         return fs.statSync(name).isDirectory() ? 
                         fs.existsSync(path.join(name, 'index.md')) ? 
-                            res + '<li><a href=\'./' + path.dirname(name).replace(MD_SOURCE_DIR, '').replace('\\', '-') + '-' + file + '-index.html' + '\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv) + '</ul></li>'  :
-                            res + '<li><a href=\'#\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv) + '</ul></li>' :
+                            res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace('\\', '-') + '-' + file + '-index.html' + '\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv, sourceDir) + '</ul></li>'  :
+                            res + '<li><a href=\'#\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv, sourceDir) + '</ul></li>' :
                         (file == 'index.md') ?
                                 res 
-                                : res + '<li><a href=\'./' + path.dirname(name).replace(MD_SOURCE_DIR, '').replace('\\', '-') + '-' + path.basename(name).replace('.md','.html')  + '\'>' + '&nbsp;'.repeat(niv*4-4) +  file.replace('.md', '') + '</a></li>';
+                                : res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace('\\', '-') + '-' + path.basename(name).replace('.md','.html')  + '\'>' + '&nbsp;'.repeat(niv*4-4) +  file.replace('.md', '') + '</a></li>';
                     }, '')
-    };    
-        
-const menuBar = makeMenuBar(MD_SOURCE_DIR, 0);
+    };     
+    
 
+/* function to get MD files to be proceced*/
+const getAllFiles = dir =>
+  fs.readdirSync(dir).reduce((files, file) => {
+    const name = path.join(dir, file);
+    const isDirectory = fs.statSync(name).isDirectory();
+    return isDirectory ? [...files, ...getAllFiles(name)] : [...files, name];
+  }, []).filter(filename => /\.md$/.test(filename))
+ 
 
-module.exports = {
-    entry: './src/main.js',
-    mode: "production",
+/*Function to get config*/  
+const makeConfig = (project) => (
+ {
+    entry: project.entry,
+    mode: project.mode,
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js', 
+        path: project.distDir,
+        filename: '[hash].js'
     },
     module: {
         rules: [
@@ -71,7 +68,18 @@ module.exports = {
                 } 
             }]
         }
-        ]
-      },
-    plugins: markdownFilesData.map(makeHtmlConfig)
-    };  
+        ]},
+    
+    plugins: getAllFiles(project.sourceDir).map(
+         (filename) => (new HtmlWebpackPlugin(
+            {
+            template: project.templateHTML,
+            filename: `${path.dirname(filename).replace(project.sourceDir, '').replace('\\', '-') + '-' + path.basename(filename).replace('.md','.html')}`,
+            chunks: [ 'main' ],    
+            bodyHTML: marked(fs.readFileSync(filename,'utf-8')),
+            menuBarHTML: makeMenuBar(project.sourceDir, 0, project.sourceDir)
+            }))
+        )
+    });
+
+module.exports = projects.map(makeConfig);
