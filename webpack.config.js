@@ -4,35 +4,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
 
 /*Initialize projects to be bundle*/
-const projects = [
-        {
-        sourceDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\md\\es\\",
-        distDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\dist\\es\\",
-        entry: "./src/main.js",
-        templateHTML: "./src/template.html",
-        mode: "production",
-        },
-        {
-            sourceDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\md\\es\\",
-            distDir: "C:\\Users\\buosigm\\Documents\\Empresas\\Yellow Duck\\Doc\\dist\\en\\",
-            entry: "./src/main.js",
-            templateHTML: "./src/template.html",
-            mode: "production",
-            },            
-    ];
+const projects = require('./md-to-html.config.json');
 
 /*Function used to create sidebar content for each project*/
 const makeMenuBar = (dir, niv, sourceDir) => {
+    if (niv==0) {sourceDir = dir}
     niv++
     return fs.readdirSync(dir).reduce((res, file) => {
         const name = path.join(dir, file);
         return fs.statSync(name).isDirectory() ? 
                         fs.existsSync(path.join(name, 'index.md')) ? 
-                            res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace('\\', '-') + '-' + file + '-index.html' + '\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv, sourceDir) + '</ul></li>'  :
+                            res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace(/\\/g, '-') + '-' + file + '-index.html' + '\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv, sourceDir) + '</ul></li>'  :
                             res + '<li><a href=\'#\'>' + '&nbsp;'.repeat(niv*4-4) + file + '</a><ul>'  + makeMenuBar(name, niv, sourceDir) + '</ul></li>' :
                         (file == 'index.md') ?
                                 res 
-                                : res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace('\\', '-') + '-' + path.basename(name).replace('.md','.html')  + '\'>' + '&nbsp;'.repeat(niv*4-4) +  file.replace('.md', '') + '</a></li>';
+                                : res + '<li><a href=\'./' + path.dirname(name).replace(sourceDir, '').replace(/\\/g, '-') + '-' + path.basename(name).replace('.md','.html')  + '\'>' + '&nbsp;'.repeat(niv*4-4) +  file.replace('.md', '') + '</a></li>';
                     }, '')
     };     
     
@@ -74,12 +60,32 @@ const makeConfig = (project) => (
          (filename) => (new HtmlWebpackPlugin(
             {
             template: project.templateHTML,
-            filename: `${path.dirname(filename).replace(project.sourceDir, '').replace('\\', '-') + '-' + path.basename(filename).replace('.md','.html')}`,
+            filename: `${path.dirname(filename).replace(project.sourceDir, '').replace(/\\/g, '-') + '-' + path.basename(filename).replace('.md','.html')}`,
             chunks: [ 'main' ],    
             bodyHTML: marked(fs.readFileSync(filename,'utf-8')),
-            menuBarHTML: makeMenuBar(project.sourceDir, 0, project.sourceDir)
+            menuBarHTML: makeMenuBar(project.sourceDir, 0)
             }))
         )
     });
+
+/*emtpy dest folders*/
+const deleteAllfiles = dir => {
+    fs.readdirSync(dir).map((file) => {        
+        const name = path.join(dir, file);
+        const isDirectory = fs.statSync(name).isDirectory();
+
+        if (isDirectory) {
+            deleteAllfiles(name);
+            fs.rmdirSync(name);
+        } else 
+        {
+            fs.unlinkSync(name);
+        }
+    });
+};
+
+projects.map((project) => {
+    deleteAllfiles(project.distDir);
+});
 
 module.exports = projects.map(makeConfig);
